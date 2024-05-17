@@ -1,9 +1,8 @@
 package interfaces;
 
 import java.io.FileNotFoundException;
-import java.rmi.*; // importa pacotes do RMI
 
-public interface IServidor extends Remote
+public interface IServidor
 {
     public String jokenpo(String jogada);
 }

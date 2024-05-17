@@ -20,15 +20,16 @@ public class ServidorService extends UnicastRemoteObject implements IServidor {
         Random rand = new Random();
 
         String jogadaMaquina = possibilidades[rand.nextInt(3)];
+        System.out.println("Máquina jogou: " + jogadaMaquina + " x Você jogou: "+ jogada);
         if(jogada.equals(jogadaMaquina)) {
             return "EMPATE!";
         }
         else if (jogada.equals("pedra") && jogadaMaquina.equals("tesoura") ||
                     jogada.equals("papel") && jogadaMaquina.equals("pedra") ||
                     jogada.equals("tesoura") && jogadaMaquina.equals("papel")) {
-                return "Você ganhou!";
+                return "Máquina jogou: " + jogadaMaquina +  " x Você jogou: "+ jogada +" \nVocê ganhou!";
         } else {
-                return "Você perdeu!";
+                return "Máquina jogou: " + jogadaMaquina +  " x Você jogou: "+ jogada +"\nVocê perdeu!";
         }
 
     }

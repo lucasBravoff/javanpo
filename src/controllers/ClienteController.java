@@ -1,11 +1,8 @@
 package controllers;
 
-import service.ServidorService;
-
 import java.io.IOException;
 import java.net.*;
 import java.net.UnknownHostException;
-import java.rmi.*;
 import java.util.Scanner;
 
 public class ClienteController {
@@ -21,15 +18,20 @@ public class ClienteController {
             endereco = InetAddress.getByName("127.0.0.1");
         }catch (SocketException e){
             e.printStackTrace();
+            scanner.close();
             return;
         }
         catch (UnknownHostException e){
             e.printStackTrace();
+            scanner.close();
             return;
         }
         String mensagem = " ";
+        System.out.println("Seja bem vindo ao jogo javampô, escreva 'exit' para sair");
+        
         try {
             while (!mensagem.equalsIgnoreCase("exit")) {
+                System.out.print("\nSua jogada: ");
                 mensagem = scanner.nextLine();
 
                 byte[] dados = mensagem.getBytes();
@@ -39,11 +41,13 @@ public class ClienteController {
                 pacote = new DatagramPacket(dadosRecebidos, dadosRecebidos.length);
                 clientSocket.receive(pacote);
                 String respostaServidor = new String(pacote.getData(), 0, pacote.getLength());
-                System.out.println("Resposta: " + respostaServidor);
+                System.out.println(respostaServidor);
             }
         }
         catch (IOException e){
             e.printStackTrace();
         }
+        scanner.close();
+        clientSocket.close();
     }
 }

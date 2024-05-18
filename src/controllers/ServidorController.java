@@ -27,14 +27,9 @@ public class ServidorController {
                 String resposta = m.jokenpo(mensagem);
                 System.out.println(resposta);
 
-                // Criar um novo DatagramPacket para enviar a resposta de volta para o cliente
                 byte[] respostaCliente = resposta.getBytes();
                 DatagramPacket pacoteEnviar = new DatagramPacket(respostaCliente, respostaCliente.length, pacote.getAddress(), pacote.getPort());
                 serverSocket.send(pacoteEnviar);
-                String respostaServidor = new String(pacoteEnviar.getData(),0,  pacoteEnviar.getLength() );
-                System.out.println("pacote enviado: " + respostaServidor);
-                System.out.println("pacote lenght: " + pacoteEnviar.getLength());
-                System.out.println("pacote data: " + pacoteEnviar.getData().toString());
             }
         } catch (SocketException e) {
             System.out.println("Erro ao criar socket: " + e.getMessage());

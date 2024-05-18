@@ -1,11 +1,8 @@
 package controllers;
 
-import service.ServidorService;
-
 import java.io.IOException;
 import java.net.*;
 import java.net.UnknownHostException;
-import java.rmi.*;
 import java.util.Scanner;
 
 public class ClienteController {

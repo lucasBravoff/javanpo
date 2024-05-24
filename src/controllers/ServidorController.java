@@ -1,5 +1,8 @@
 package controllers;
 
+import interfaces.ICommon;
+import interfaces.IServidor;
+import service.CommonService;
 import service.ServidorService;
 
 import java.io.IOException;
@@ -8,27 +11,48 @@ import java.rmi.RemoteException;
 
 public class ServidorController {
 
+    private IServidor _servidor;
+
+    public ServidorController(IServidor servidor){
+        _servidor = servidor;
+    }
+
     public static void main() throws RemoteException {
         final int PORT = 6000;
         byte[] dados = new byte[1024];
         DatagramSocket serverSocket;
-        ServidorService m = new ServidorService();
+        ICommon _common = new CommonService();
+        IServidor _servidor = new ServidorService();
+        String mensagem = "";
+
 
         try {
             serverSocket = new DatagramSocket(PORT);
             System.out.println("Server online ;D");
-            while (true) {
-                DatagramPacket pacote = new DatagramPacket(dados, dados.length);
-                serverSocket.receive(pacote);
+            while (!mensagem.equalsIgnoreCase("exit")) {
+                DatagramPacket pacoteModoJogo = new DatagramPacket(dados, dados.length);
+                System.out.println("aguardando");
+                serverSocket.receive(pacoteModoJogo);
+                System.out.println("passou");
+                mensagem = new String(pacoteModoJogo.getData(), 0, pacoteModoJogo.getLength());
+                System.out.println(mensagem);
 
-                String mensagem = new String(pacote.getData(), 0, pacote.getLength());
-                String resposta = m.jokenpo(mensagem);
-                System.out.println(resposta);
+                //String mensagem = _common.ReceberPacote(dados, serverSocket);
 
-                // Criar um novo DatagramPacket para enviar a resposta de volta para o cliente
-                byte[] respostaCliente = resposta.getBytes();
-                DatagramPacket pacoteEnviar = new DatagramPacket(respostaCliente, respostaCliente.length, pacote.getAddress(), pacote.getPort());
-                serverSocket.send(pacoteEnviar);
+                if (mensagem.equals("1")) {
+                    while(!mensagem.equalsIgnoreCase("trocar")|| !mensagem.equalsIgnoreCase("exit")) {
+                        mensagem = _common.ReceberPacote(dados, serverSocket);
+
+                        String resposta = _servidor.jokenpo(mensagem);
+                        System.out.println(resposta);
+
+                        // Criar um novo DatagramPacket para enviar a resposta de volta para o cliente
+                        byte[] respostaCliente = resposta.getBytes();
+                        DatagramPacket pacoteEnviar = new DatagramPacket(respostaCliente, respostaCliente.length, pacoteModoJogo.getAddress(), pacoteModoJogo.getPort());
+                        serverSocket.send(pacoteEnviar);
+                    }
+
+                }
             }
         } catch (SocketException e) {
             System.out.println("Erro ao criar socket: " + e.getMessage());

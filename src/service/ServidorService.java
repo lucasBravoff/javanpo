@@ -1,5 +1,8 @@
 package service;
 
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;// necessito do UnicastRemoteObject � Objeto Remoto Unicast
 import java.util.Random;
@@ -29,10 +32,16 @@ public class ServidorService extends UnicastRemoteObject implements IServidor {
                     jogadaMaquina.equals("papel") && jogada.equals("pedra") ||
                     jogadaMaquina.equals("tesoura") && jogada.equals("papel")) {
                 return "Máquina jogou: " + jogadaMaquina + "\n---Você perdeu!";
-        } else {
+        }
+        else if(jogada.equalsIgnoreCase("trocar")|| jogada.equalsIgnoreCase("exit")){
+            return"\n";
+        }
+        else {
             return "Jogada não encontrada, tente novamente";
         }
 
     }
+
+
 
 }

@@ -2,12 +2,11 @@ package controllers;
 
 import interfaces.ICommon;
 import interfaces.IServidor;
-import service.CommonService;
-import service.ServidorService;
-
 import java.io.IOException;
 import java.net.*;
 import java.rmi.RemoteException;
+import service.CommonService;
+import service.ServidorService;
 
 public class ServidorController {
 
@@ -17,7 +16,7 @@ public class ServidorController {
         _servidor = servidor;
     }
 
-    public static void main() throws RemoteException {
+    public static void main(String[] args) throws RemoteException {
         final int PORT = 6000;
         byte[] dados = new byte[1024];
         DatagramSocket serverSocket;
@@ -40,7 +39,7 @@ public class ServidorController {
                 //String mensagem = _common.ReceberPacote(dados, serverSocket);
 
                 if (mensagem.equals("1")) {
-                    while(!mensagem.equalsIgnoreCase("trocar")|| !mensagem.equalsIgnoreCase("exit")) {
+                    while(!mensagem.equalsIgnoreCase("trocar") && !mensagem.equalsIgnoreCase("exit")) {
                         mensagem = _common.ReceberPacote(dados, serverSocket);
 
                         String resposta = _servidor.jokenpo(mensagem);

@@ -2,11 +2,10 @@ package controllers;
 
 import java.io.IOException;
 import java.net.*;
-import java.net.UnknownHostException;
 import java.util.Scanner;
 
 public class ClienteController {
-    public static void main() {
+    public static void main(String[] args) {
         final int PORT = 6000;
         byte[] dados = new byte[1024];
         DatagramSocket clientSocket;
@@ -34,7 +33,7 @@ public class ClienteController {
                 clientSocket.send(PacoteModoJogo);
 
                 if (mensagem.equals("1")) {
-                    while (!mensagem.equalsIgnoreCase("trocar") ||!mensagem.equalsIgnoreCase("exit") ) {
+                    while (!mensagem.equalsIgnoreCase("exit") && !mensagem.equalsIgnoreCase("trocar")) {
                         System.out.print("\nSua jogada: ");
                         mensagem = scanner.nextLine();
 

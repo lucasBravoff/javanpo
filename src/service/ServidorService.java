@@ -1,13 +1,9 @@
 package service;
 
-import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.rmi.RemoteException;
-import java.rmi.server.UnicastRemoteObject;// necessito do UnicastRemoteObject � Objeto Remoto Unicast
-import java.util.Random;
-
 import interfaces.IServidor;
+import java.rmi.RemoteException;// necessito do UnicastRemoteObject � Objeto Remoto Unicast
+import java.rmi.server.UnicastRemoteObject;
+import java.util.Random;
 
 public class ServidorService extends UnicastRemoteObject implements IServidor {
 
@@ -15,6 +11,7 @@ public class ServidorService extends UnicastRemoteObject implements IServidor {
         super();
     }
 
+    @Override
     public String jokenpo(String jogada){
         jogada = jogada.toLowerCase().strip();
         String[] possibilidades = {"pedra", "papel", "tesoura"};

@@ -5,6 +5,7 @@ import interfaces.IServidor;
 import java.io.IOException;
 import java.net.*;
 import java.rmi.RemoteException;
+import java.util.Random;
 import service.CommonService;
 import service.ServidorService;
 
@@ -22,28 +23,40 @@ public class ServidorController {
         DatagramSocket serverSocket;
         ICommon _common = new CommonService();
         IServidor _servidor = new ServidorService();
-        String mensagem = "";
 
         try {
             serverSocket = new DatagramSocket(PORT);
             System.out.println("Server online ;D");
 
-            while (true) { 
+            while (true) {                 
+                DatagramPacket pacoteModoJogo = new DatagramPacket(dados, dados.length);
+                serverSocket.receive(pacoteModoJogo);
+                String mensagem = new String(pacoteModoJogo.getData(), 0, pacoteModoJogo.getLength());
 
-                DatagramPacket pacote = new DatagramPacket(dados, dados.length);
-                System.out.println("Esperando porta");
-                serverSocket.receive(pacote);
-                int portaParaJogar = Integer.parseInt(new String(pacote.getData(), 0, pacote.getLength()));
-                System.out.println(portaParaJogar);
-                
-                new Thread(() -> {
+                if (mensagem.equals("1")) {
+                    new Thread(() -> {
                     ServidorService newGame = null;
                     try {
                         newGame = new ServidorService();
                     } catch (RemoteException ex) {
                     }
-                    newGame.createGame(portaParaJogar, dados, mensagem, _common, _servidor);
+                    Random random = new Random();
+                    int porta = random.nextInt(6001, 15000);
+                    newGame.createGame(porta, dados, mensagem, _common, _servidor);
                 }).start();
+                }
+                else if (mensagem.equals("2")) {
+                    DatagramPacket pacote = new DatagramPacket(dados, dados.length);
+                    serverSocket.receive(pacote);
+                    int portaParaJogar = Integer.parseInt(new String(pacote.getData(), 0, pacote.getLength()));
+                    
+                    
+                    
+                }
+
+
+                
+                
             }
 
                 

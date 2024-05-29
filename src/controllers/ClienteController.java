@@ -8,7 +8,7 @@ import java.util.Scanner;
 public class ClienteController {
     public static void main(String[] args) throws IOException {
         Random random = new Random();
-        final int PORT = random.nextInt(6001, 7000);
+        final int PORT = random.nextInt(6001, 15000);
         byte[] dados = new byte[1024];
         DatagramSocket clientSocket;
         InetAddress endereco;
@@ -26,10 +26,6 @@ public class ClienteController {
             endereco = InetAddress.getByName(ip);
 
             System.out.println(PORT);
-
-            byte[] msgByte = String.valueOf(PORT).getBytes();
-            DatagramPacket portaParaJogar = new DatagramPacket(msgByte, msgByte.length, endereco, 6000);
-            clientSocket.send(portaParaJogar);
 
         } catch (SocketException | UnknownHostException e){
             e.printStackTrace();
@@ -83,6 +79,21 @@ public class ClienteController {
                 } 
                 
                 else if (mensagem.equals("2")) {
+
+                    System.out.print("Escolha a porta: ");
+                    String portPVP = scanner.next();
+                    msgByte = String.valueOf(portPVP).getBytes();
+                    DatagramPacket portaParaJogar = new DatagramPacket(msgByte, msgByte.length, endereco, 6000);
+                    clientSocket.send(portaParaJogar);
+
+                    while(!mensagem.equalsIgnoreCase("exit") && !mensagem.equalsIgnoreCase("trocar")) {
+                        mensagem = scanner.nextLine();
+
+                        msgByte = String.valueOf(mensagem).getBytes();
+                        DatagramPacket jogada = new DatagramPacket(msgByte, msgByte.length, endereco, Integer.parseInt(portPVP));
+                        clientSocket.send(jogada);
+
+                    }
                     
                 }
             } catch (IOException e) {

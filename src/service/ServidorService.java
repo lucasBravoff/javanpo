@@ -15,23 +15,22 @@ public class ServidorService extends UnicastRemoteObject implements IServidor {
     }
 
     public void createGame(int PORT, byte[] dados, String mensagem, ICommon _common, IServidor _servidor) {
-        byte[] dados2 = dados;
-        
         try {
             DatagramSocket serverSocket;
             serverSocket = new DatagramSocket(PORT);
-             while (!mensagem.equalsIgnoreCase("exit")) {
 
-                DatagramPacket pacoteModoJogo = new DatagramPacket(dados, dados.length);
-
+            
+            while (!mensagem.equalsIgnoreCase("exit")) {
                     while (!mensagem.equalsIgnoreCase("trocar") && !mensagem.equalsIgnoreCase("exit")) {
-                        mensagem = _common.ReceberPacote(dados, serverSocket);
-
-                        String resposta = _servidor.jokenpo(mensagem);
+                        DatagramPacket jogada = new DatagramPacket(dados, dados.length);
+                        serverSocket.receive(jogada);
+                        String respJogada = new String(jogada.getData(), 0, jogada.getLength());
+                        
+                        String resposta = jokenpo(respJogada);
 
                         // Criar um novo DatagramPacket para enviar a resposta de volta para o cliente
                         byte[] respostaCliente = resposta.getBytes();
-                        DatagramPacket pacoteEnviar = new DatagramPacket(respostaCliente, respostaCliente.length, pacoteModoJogo.getAddress(), pacoteModoJogo.getPort());
+                        DatagramPacket pacoteEnviar = new DatagramPacket(respostaCliente, respostaCliente.length, jogada.getAddress(), jogada.getPort());
                         serverSocket.send(pacoteEnviar);
                 }
                 // else if (mensagem.equals("2")) {
@@ -59,6 +58,7 @@ public class ServidorService extends UnicastRemoteObject implements IServidor {
                 // }
             }
         } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
        
     }

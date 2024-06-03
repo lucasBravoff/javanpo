@@ -20,12 +20,10 @@ public class ClienteController {
         try {
             clientSocket = new DatagramSocket();
             String ip = "";
-            System.out.print("Escreve o IPae vagabssssss: ");
+            System.out.print("Escreva o IP: ");
             ip = scanner.nextLine();
             
             endereco = InetAddress.getByName(ip);
-
-            System.out.println(PORT);
 
         } catch (SocketException | UnknownHostException e){
             e.printStackTrace();
@@ -39,25 +37,33 @@ public class ClienteController {
             try {
                 if (mensagem.equalsIgnoreCase("trocar")) {
                     System.out.print("Jogo finalizado\nVitorias: " + vitorias + "\nDerrotas: " + derrotas + "\nEmpates: " + empates);
+                    vitorias = derrotas = empates = 0;
                 }
                 
                 System.out.println("\n\nSelecione o modo de jogo \n1-Contra máquina\n2-PvP");
 
                 mensagem = scanner.nextLine();
                 byte[] msgByte = mensagem.getBytes();
-                DatagramPacket PacoteModoJogo = new DatagramPacket(msgByte, msgByte.length, endereco, PORT);
+                DatagramPacket PacoteModoJogo = new DatagramPacket(msgByte, msgByte.length, endereco, 6000);
                 clientSocket.send(PacoteModoJogo);
 
                 if (mensagem.equals("1")) {
+                    
+                    byte[] msgPort = String.valueOf(PORT).getBytes();
+                    DatagramPacket porta = new DatagramPacket(msgPort, msgPort.length, endereco, 6000);
+                    clientSocket.send(porta);
+
                     while (!mensagem.equalsIgnoreCase("exit") && !mensagem.equalsIgnoreCase("trocar")) {
+
                         System.out.print("\nSua jogada: ");
                         mensagem = scanner.nextLine();
 
-                        dados = mensagem.getBytes();
-                        byte[] dadosRecebidos = new byte[1024];
-                        DatagramPacket pacote = new DatagramPacket(dados, dados.length, endereco, PORT);
+                        byte[] jogada = mensagem.getBytes();
+                        DatagramPacket pacote = new DatagramPacket(jogada, jogada.length, endereco, PORT);
                         clientSocket.send(pacote);
-                        pacote = new DatagramPacket(dadosRecebidos, dadosRecebidos.length);
+                        
+                        byte[] dadosRecebidos = new byte[1024];
+                        pacote = new DatagramPacket(dadosRecebidos, dadosRecebidos.length, endereco, PORT);
                         clientSocket.receive(pacote);
                         String respostaServidor = new String(pacote.getData(), 0, pacote.getLength());
 

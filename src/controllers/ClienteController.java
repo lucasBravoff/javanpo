@@ -67,7 +67,7 @@ public class ClienteController {
                         clientSocket.receive(pacote);
                         String respostaServidor = new String(pacote.getData(), 0, pacote.getLength());
 
-                        if (mensagem.equalsIgnoreCase("trocar") || mensagem.equalsIgnoreCase("Jogada não encontrada \ntente novamente")) {
+                        if (mensagem.equalsIgnoreCase("trocar") || mensagem.equalsIgnoreCase("Jogada não encontrada \ntente novamente") || mensagem.equalsIgnoreCase("exit")) {
                             // faz nada sô
                         }
                         else if ("---Você ganhou!".equals(respostaServidor.split("\n")[1])) {
@@ -86,19 +86,26 @@ public class ClienteController {
                 
                 else if (mensagem.equals("2")) {
 
-                    System.out.print("Escolha a porta: ");
-                    String portPVP = scanner.next();
-                    msgByte = String.valueOf(portPVP).getBytes();
-                    DatagramPacket portaParaJogar = new DatagramPacket(msgByte, msgByte.length, endereco, 6000);
-                    clientSocket.send(portaParaJogar);
+                    try {
+                        System.out.print("Escolha a porta (entre 6001 e 15000): ");
+                        String portPVP = scanner.next();
+                        msgByte = String.valueOf(portPVP).getBytes();
+                        DatagramPacket portaParaJogar = new DatagramPacket(msgByte, msgByte.length, endereco, 6000);
+                        clientSocket.send(portaParaJogar);
+    
+                        while(!mensagem.equalsIgnoreCase("exit") && !mensagem.equalsIgnoreCase("trocar")) {
+                            System.out.println("Escreva sua jogada:");
+                            mensagem = scanner.nextLine();
+                            mensagem = scanner.nextLine();
 
-                    while(!mensagem.equalsIgnoreCase("exit") && !mensagem.equalsIgnoreCase("trocar")) {
-                        mensagem = scanner.nextLine();
-
-                        msgByte = String.valueOf(mensagem).getBytes();
-                        DatagramPacket jogada = new DatagramPacket(msgByte, msgByte.length, endereco, Integer.parseInt(portPVP));
-                        clientSocket.send(jogada);
-
+                            msgByte = String.valueOf(mensagem).getBytes();
+                            DatagramPacket jogada = new DatagramPacket(msgByte, msgByte.length, endereco, Integer.parseInt(portPVP));
+                            clientSocket.send(jogada);
+    
+                        }
+                        
+                    } catch (Exception e) {
+                        System.out.println("Erro no servidor, tente novamente");
                     }
                     
                 }

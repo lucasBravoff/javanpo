@@ -1,11 +1,18 @@
 package service;
 
+import interfaces.IClientHandler;
 import interfaces.ICommon;
 import interfaces.IServidor;
+
+import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.rmi.RemoteException;
-import java.rmi.server.UnicastRemoteObject;// necessito do UnicastRemoteObject � Objeto Remoto Unicast
+import java.rmi.server.UnicastRemoteObject;
+import java.sql.SQLOutput;
+import java.util.ArrayList;
 import java.util.Random;
 
 public class ServidorService extends UnicastRemoteObject implements IServidor {
@@ -19,8 +26,8 @@ public class ServidorService extends UnicastRemoteObject implements IServidor {
             DatagramSocket serverSocket;
             serverSocket = new DatagramSocket(PORT);
 
-            
             while (!mensagem.equalsIgnoreCase("exit")) {
+                if (mensagem.equals("1")) {
                     while (!mensagem.equalsIgnoreCase("trocar") && !mensagem.equalsIgnoreCase("exit")) {
                         DatagramPacket jogada = new DatagramPacket(dados, dados.length);
                         serverSocket.receive(jogada);
@@ -32,31 +39,26 @@ public class ServidorService extends UnicastRemoteObject implements IServidor {
                         byte[] respostaCliente = resposta.getBytes();
                         DatagramPacket pacoteEnviar = new DatagramPacket(respostaCliente, respostaCliente.length, jogada.getAddress(), jogada.getPort());
                         serverSocket.send(pacoteEnviar);
+                    }
                 }
-                // else if (mensagem.equals("2")) {
-                //     System.out.println("entrou no if 2");
-                //     DatagramSocket player1Socket = new DatagramSocket(PORT);
-                //     DatagramSocket player2Socket = new DatagramSocket(PORT);
+                else if (mensagem.equals("2")) {
+                    ArrayList<String> jog = new ArrayList<String>();
 
-                //     DatagramPacket receberPlayer1 = new DatagramPacket(dados, dados.length, pacoteModoJogo.getAddress(), pacoteModoJogo.getPort());
-                //     DatagramPacket receberPlayer2 = new DatagramPacket(dados2, dados2.length, player2.getAddress(), pacoteModoJogo.getPort());
+                    try (ServerSocket serverSocket1 =  new ServerSocket(PORT)) {
+                            Socket clientSocket = serverSocket1.accept();
+                            new ClientHandlerService(clientSocket).start();
 
-                //     player1Socket.receive(receberPlayer1);
-                //     player2Socket.receive(receberPlayer2);
+                    } catch (IOException e) {
+                        System.out.println(e.getMessage());
+                    }
 
-                //     System.out.println("Player1: " + receberPlayer1 + "\nPlayer2: " + receberPlayer2);
+                    // DatagramPacket jogada = new DatagramPacket(dados, dados.length);
+                    // serverSocket.receive(jogada);
+                    // String tal = new String(jogada.getData(), 0, jogada.getLength());
+                    }                    
 
-                //     String resultadoPVP = jokenpoPvp(String.valueOf(receberPlayer1), String.valueOf(receberPlayer2));
-
-                //     byte[] respostaCliente = resultadoPVP.getBytes();
-                //     DatagramPacket pacoteEnviar = new DatagramPacket(respostaCliente, respostaCliente.length, receberPlayer1.getAddress(), receberPlayer1.getPort());
-                //     DatagramPacket pacoteEnviarP2 = new DatagramPacket(respostaCliente, respostaCliente.length, receberPlayer2.getAddress(), receberPlayer2.getPort());
-                //     serverSocket.send(pacoteEnviar);
-                //     serverSocket.send(pacoteEnviarP2);
-
-                //     System.out.println(resultadoPVP);
-                // }
-            }
+                }
+          
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }

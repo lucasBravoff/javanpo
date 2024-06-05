@@ -109,14 +109,14 @@ public class ClienteController {
 
                                 saida.writeObject(mensagem);
 
-                                System.out.println("Aguarde o oponente jogar - porta do cleinte: " + cliente.getLocalPort());
+                                System.out.println("Aguarde o seu oponente jogar");
 
                                 ServerSocket server = new ServerSocket(cliente.getLocalPort()+2);
-                                System.out.println("porta: " + server.getLocalPort());
                                 Socket loader = server.accept();
                                 ObjectInputStream resultado = new ObjectInputStream(loader.getInputStream());
 
-                                System.out.println("receba a inteligencia: \n" + ((String) resultado.readObject()));
+
+                                System.out.println("\n" + ((String) resultado.readObject()) + "\n");
                             }
 
 

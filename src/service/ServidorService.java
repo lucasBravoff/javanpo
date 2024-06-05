@@ -58,12 +58,12 @@ public class ServidorService extends UnicastRemoteObject implements IServidor {
 
                         servidor = null;
 
-                        String msg = "oiiiii";
+                        String msg = jokenpoPvp(jog.get(0), jog.get(1));
                         Socket respostaCliente = new Socket(jogadores.get(0).getInetAddress(), jogadores.get(0).getPort()+2);
                         ObjectOutputStream saida = new ObjectOutputStream(respostaCliente.getOutputStream());
                         saida.writeObject(msg);
 
-                        msg = "tchauuuu";
+                        msg = jokenpoPvp(jog.get(1), jog.get(0));
                         respostaCliente = new Socket(jogadores.get(1).getInetAddress(), jogadores.get(1).getPort()+2);
                         saida = new ObjectOutputStream(respostaCliente.getOutputStream());
                         saida.writeObject(msg);
@@ -127,7 +127,7 @@ public class ServidorService extends UnicastRemoteObject implements IServidor {
         else if (jogada2.equalsIgnoreCase("pedra") && jogada.equalsIgnoreCase("tesoura") ||
                     jogada2.equalsIgnoreCase("papel") && jogada.equalsIgnoreCase("pedra") ||
                     jogada2.equalsIgnoreCase("tesoura") && jogada.equalsIgnoreCase("papel")) {
-                return "Você jogou: \" + jogada + \"\\nSeu oponente jogou: \" + jogada2 + \"\\n---Você perdeu...";
+            return "Você jogou: " + jogada + "\nSeu oponente jogou: " + jogada2 + "\n---Você perdeu...";
         }
         else if(jogada.equalsIgnoreCase("trocar")|| jogada.equalsIgnoreCase("exit")){
             return"\n";

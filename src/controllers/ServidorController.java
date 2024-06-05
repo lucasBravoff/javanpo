@@ -48,8 +48,6 @@ public class ServidorController {
                     DatagramPacket pacote = new DatagramPacket(dados, dados.length);
                     serverSocket.receive(pacote);
                     int portaParaJogar = Integer.parseInt(new String(pacote.getData(), 0, pacote.getLength()));
-                    
-                    System.out.println("Porta pvp: " + portaParaJogar);
 
                     ServidorService newGame = new ServidorService();
                     new Thread(() -> {

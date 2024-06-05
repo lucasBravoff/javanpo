@@ -1,9 +1,12 @@
 package controllers;
 
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.net.*;
+import java.sql.SQLOutput;
 import java.util.Random;
 import java.util.Scanner;
+import java.io.ObjectInputStream;
 
 public class ClienteController {
     public static void main(String[] args) throws IOException {
@@ -16,10 +19,10 @@ public class ClienteController {
         int vitorias = 0;
         int derrotas = 0;
         int empates = 0;
+        String ip = "";
 
         try {
             clientSocket = new DatagramSocket();
-            String ip = "";
             System.out.print("Escreva o IP: ");
             ip = scanner.nextLine();
             
@@ -94,18 +97,38 @@ public class ClienteController {
                         clientSocket.send(portaParaJogar);
     
                         while(!mensagem.equalsIgnoreCase("exit") && !mensagem.equalsIgnoreCase("trocar")) {
-                            System.out.println("Escreva sua jogada:");
-                            mensagem = scanner.nextLine();
-                            mensagem = scanner.nextLine();
+                            System.out.print("Escreva sua jogada:");
+                            mensagem = scanner.next();
 
-                            msgByte = String.valueOf(mensagem).getBytes();
+                            if (!mensagem.equalsIgnoreCase("pedra") && !mensagem.equalsIgnoreCase("papel") && !mensagem.equalsIgnoreCase("tesoura")) {
+                                System.out.println("Jogada inválida, escreva novamente");
+                            }
+                            else {
+                                Socket cliente = new Socket(ip, Integer.parseInt(portPVP));
+                                ObjectOutputStream saida = new ObjectOutputStream(cliente.getOutputStream());
+
+                                saida.writeObject(mensagem);
+
+                                System.out.println("Aguarde o oponente jogar - porta do cleinte: " + cliente.getLocalPort());
+
+                                ServerSocket server = new ServerSocket(cliente.getLocalPort()+2);
+                                System.out.println("porta: " + server.getLocalPort());
+                                Socket loader = server.accept();
+                                ObjectInputStream resultado = new ObjectInputStream(loader.getInputStream());
+
+                                System.out.println("receba a inteligencia: \n" + ((String) resultado.readObject()));
+                            }
+
+
+
+                            /*msgByte = String.valueOf(mensagem).getBytes();
                             DatagramPacket jogada = new DatagramPacket(msgByte, msgByte.length, endereco, Integer.parseInt(portPVP));
-                            clientSocket.send(jogada);
+                            clientSocket.send(jogada);*/
     
                         }
                         
                     } catch (Exception e) {
-                        System.out.println("Erro no servidor, tente novamente");
+                        System.out.println("Erro no cliente, tente novamente: " + e.getMessage());
                     }
                     
                 }

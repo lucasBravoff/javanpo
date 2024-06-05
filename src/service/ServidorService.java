@@ -1,17 +1,16 @@
 package service;
 
-import interfaces.IClientHandler;
 import interfaces.ICommon;
 import interfaces.IServidor;
 
-import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -44,13 +43,36 @@ public class ServidorService extends UnicastRemoteObject implements IServidor {
                 else if (mensagem.equals("2")) {
                     ArrayList<String> jog = new ArrayList<String>();
 
-                    try (ServerSocket serverSocket1 =  new ServerSocket(PORT)) {
-                            Socket clientSocket = serverSocket1.accept();
-                            new ClientHandlerService(clientSocket).start();
+                    ServerSocket servidor = new ServerSocket(PORT);
+                    System.out.println("Servidor ouvindo a porta: " + PORT);
 
-                    } catch (IOException e) {
-                        System.out.println(e.getMessage());
+                    while(true) {
+                        ArrayList<Socket> jogadores = new ArrayList<Socket>();
+
+                        while (jog.size() < 2) {
+                            Socket jogador = servidor.accept();
+                            ObjectInputStream entrada = new ObjectInputStream(jogador.getInputStream());
+                            jog.add((String) entrada.readObject());
+                            jogadores.add(jogador);
+                        }
+
+                        servidor = null;
+
+                        String msg = "oiiiii";
+                        Socket respostaCliente = new Socket(jogadores.get(0).getInetAddress(), jogadores.get(0).getPort()+2);
+                        ObjectOutputStream saida = new ObjectOutputStream(respostaCliente.getOutputStream());
+                        saida.writeObject(msg);
+
+                        msg = "tchauuuu";
+                        respostaCliente = new Socket(jogadores.get(1).getInetAddress(), jogadores.get(1).getPort()+2);
+                        saida = new ObjectOutputStream(respostaCliente.getOutputStream());
+                        saida.writeObject(msg);
+
+
+                        jogadores.clear();
+                        jog.clear();
                     }
+
 
                     // DatagramPacket jogada = new DatagramPacket(dados, dados.length);
                     // serverSocket.receive(jogada);
@@ -60,7 +82,7 @@ public class ServidorService extends UnicastRemoteObject implements IServidor {
                 }
           
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            System.out.println("erro no servidorService: " + e.getMessage());
         }
        
     }
@@ -95,17 +117,17 @@ public class ServidorService extends UnicastRemoteObject implements IServidor {
 
     public String jokenpoPvp(String jogada, String jogada2) {
         if(jogada.equalsIgnoreCase(jogada2)) {
-            return "Os dois jogaram o mesmo elemento \n---EMPATE!";
+            return "Os dois jogaram o mesmo elemento \n---EMPATE!---";
         }
         else if (jogada.equalsIgnoreCase("pedra") && jogada2.equalsIgnoreCase("tesoura") ||
                     jogada.equalsIgnoreCase("papel") && jogada2.equalsIgnoreCase("pedra") ||
                     jogada.equalsIgnoreCase("tesoura") && jogada2.equalsIgnoreCase("papel")) {
-                return "Jogador 1 jogou: " + jogada + "\nJogador 1 jogou: " + jogada2 + "---Jogador 1 ganhou!";
+                return "Você jogou: " + jogada + "\nSeu oponente jogou: " + jogada2 + "\n---VOCÊ GANHOU!!---";
         } 
         else if (jogada2.equalsIgnoreCase("pedra") && jogada.equalsIgnoreCase("tesoura") ||
                     jogada2.equalsIgnoreCase("papel") && jogada.equalsIgnoreCase("pedra") ||
                     jogada2.equalsIgnoreCase("tesoura") && jogada.equalsIgnoreCase("papel")) {
-                return "Jogador 1 jogou: " + jogada + "\nJogador 1 jogou: " + jogada2 + "---Jogador 2 ganhou";
+                return "Você jogou: \" + jogada + \"\\nSeu oponente jogou: \" + jogada2 + \"\\n---Você perdeu...";
         }
         else if(jogada.equalsIgnoreCase("trocar")|| jogada.equalsIgnoreCase("exit")){
             return"\n";

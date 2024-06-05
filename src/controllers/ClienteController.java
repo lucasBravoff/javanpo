@@ -95,8 +95,9 @@ public class ClienteController {
                         msgByte = String.valueOf(portPVP).getBytes();
                         DatagramPacket portaParaJogar = new DatagramPacket(msgByte, msgByte.length, endereco, 6000);
                         clientSocket.send(portaParaJogar);
-    
+
                         while(!mensagem.equalsIgnoreCase("exit") && !mensagem.equalsIgnoreCase("trocar")) {
+
                             System.out.print("Escreva sua jogada:");
                             mensagem = scanner.next();
 
@@ -117,7 +118,7 @@ public class ClienteController {
 
 
                                 System.out.println("\n" + ((String) resultado.readObject()) + "\n");
-                            }
+                             }
 
 
 

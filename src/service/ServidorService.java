@@ -56,8 +56,6 @@ public class ServidorService extends UnicastRemoteObject implements IServidor {
                             jogadores.add(jogador);
                         }
 
-                        servidor = null;
-
                         String msg = jokenpoPvp(jog.get(0), jog.get(1));
                         Socket respostaCliente = new Socket(jogadores.get(0).getInetAddress(), jogadores.get(0).getPort()+2);
                         ObjectOutputStream saida = new ObjectOutputStream(respostaCliente.getOutputStream());

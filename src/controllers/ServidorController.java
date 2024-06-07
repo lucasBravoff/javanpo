@@ -5,7 +5,6 @@ import interfaces.IServidor;
 import java.io.IOException;
 import java.net.*;
 import java.rmi.RemoteException;
-
 import service.CommonService;
 import service.ServidorService;
 
@@ -37,8 +36,6 @@ public class ServidorController {
                     DatagramPacket porta = new DatagramPacket(dados, dados.length);
                     serverSocket.receive(porta);
                     String port = new String(porta.getData(), 0, porta.getLength());
-
-                    System.out.println(port);
 
                     ServidorService newGame = new ServidorService();
                     new Thread(() -> {

@@ -3,18 +3,15 @@ package controllers;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.*;
+import java.sql.SQLOutput;
 import java.util.Random;
 import java.util.Scanner;
 import java.io.ObjectInputStream;
-import java.util.concurrent.ThreadLocalRandom;
 
 public class ClienteController {
     public static void main(String[] args) throws IOException {
         Random random = new Random();
-        int min = 6001;
-        int max = 20000;
-        int randomNumber = ThreadLocalRandom.current().nextInt(min, max + 1);
-        final int PORT = randomNumber;
+        final int PORT = random.nextInt(6001, 15000);
         byte[] dados = new byte[1024];
         DatagramSocket clientSocket;
         InetAddress endereco;
@@ -22,7 +19,7 @@ public class ClienteController {
         int vitorias = 0;
         int derrotas = 0;
         int empates = 0;
-        String ip = "";
+        String ip;
 
         try {
             clientSocket = new DatagramSocket();
@@ -36,7 +33,7 @@ public class ClienteController {
             scanner.close();
             return;
         }
-        String mensagem = " ";
+        String mensagem = "";
         System.out.println("Seja bem vindo ao jogo javampô, escreva 'exit' para sair");
 
         while (!mensagem.equalsIgnoreCase("exit")) {
@@ -121,6 +118,8 @@ public class ClienteController {
                                 saida.writeObject(mensagem);
 
                                 System.out.println("Aguarde o seu oponente jogar");
+                                System.out.print("\033[H\033[2J");
+                                System.out.flush();
 
                                 ServerSocket server = new ServerSocket(cliente.getLocalPort()+2);
                                 Socket loader = server.accept();

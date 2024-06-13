@@ -28,21 +28,14 @@ public class ServidorController {
             System.out.println("Server online ;D");
 
             while (true) {       
-                
-                System.out.println("waiting for game mode");
-
                 DatagramPacket pacoteModoJogo = new DatagramPacket(dados, dados.length);
                 serverSocket.receive(pacoteModoJogo);
                 String mensagem = new String(pacoteModoJogo.getData(), 0, pacoteModoJogo.getLength());
-                                
-                System.out.println("Game mode escolhido: " + mensagem);
                 
                 if (mensagem.equals("1")) {
                     DatagramPacket porta = new DatagramPacket(dados, dados.length);
                     serverSocket.receive(porta);
                     String port = new String(porta.getData(), 0, porta.getLength());
-
-                    System.out.println(port);
 
                     ServidorService newGame = new ServidorService();
                     new Thread(() -> {
@@ -53,12 +46,14 @@ public class ServidorController {
                     DatagramPacket pacote = new DatagramPacket(dados, dados.length);
                     serverSocket.receive(pacote);
                     int portaParaJogar = Integer.parseInt(new String(pacote.getData(), 0, pacote.getLength()));
-                
+
+                    ServidorService newGame = new ServidorService();
+                    new Thread(() -> {
+                        newGame.createGame(portaParaJogar, dados, mensagem, _common, _servidor);
+                }).start();
+                    
                 }
-
-
-                
-                
+ 
             }
 
                 
